@@ -1,0 +1,5 @@
+Título: Monkey Patching
+
+Resumen:
+Introducción al "monkey patching" con python. Qué es, cómo y por qué usar
+esta técnica que nos permiten los lenguajes de programación dinámicos.

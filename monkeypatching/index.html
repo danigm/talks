@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Monkey Patching</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="shower/themes/material/styles/screen-16x10.css">
+    <style>
+        .slide {
+            background-color: #397004;
+            color: #eee;
+        }
+
+        .slide h2 {
+            color: white;
+        }
+        .slide p.note, .slide pre .comment {
+            color: #ddd;
+        }
+        .slide .shout::after {
+            position: absolute;
+            top: -300%;
+            right: 0;
+            bottom: -300%;
+            left: 0;
+            z-index: -1;
+            background: #397004 -webkit-linear-gradient(315deg,#397004 50%,#2f4e31 50%) no-repeat;
+            background: #397004 linear-gradient(135deg,#397004 50%,#2f4e31 50%) no-repeat;
+            content: '';
+        }
+    </style>
+</head>
+<body class="shower list">
+    <header class="caption">
+        <h1>Monkey Patching</h1>
+        <p>wadobo.com</p>
+    </header>
+    <section class="slide" id="cover">
+        <h2>Monkey Patching</h2>
+        <p>Daniel García Moreno (@danigm)</p>
+        <p>&lt;danigm@wadobo.com&gt;</p>
+        <p>http://wadobo.com</p>
+        <img src="pictures/slide-bg.png" alt="" class="cover">
+        <!--
+            To apply styles to the certain slides
+            set slide ID to get needed elements
+            -->
+        <style>
+            #cover h2 {
+                margin:30px 0 0;
+                color:#FFF;
+                text-align:center;
+                font-size:70px;
+                }
+            #cover p {
+                margin:10px 0 0;
+                text-align:center;
+                color:#FFF;
+                font-style:italic;
+                font-size:20px;
+            }
+            #cover p a {
+                color:#FFF;
+            }
+        </style>
+    </section>
+
+    <section class="slide">
+        <h2 class="shout shrink">Qué es el Monkey Patching</h2>
+    </section>
+
+    <section class="slide">
+        <h2>Monkey Patching</h2>
+        <figure>
+            <blockquote>
+                <p>If it walks like a duck and talks like a duck, it’s a duck, right? So if this duck is not giving you the noise that you want, you’ve got to just punch that duck until it returns what you expect.
+                </p>
+            </blockquote>
+            <figcaption>Patrick Ewing</figcaption>
+        </figure>
+    </section>
+
+    <section class="slide">
+        <h2>Monkey Patching</h2>
+        <p> El Moneky Patching es hacer modificaciones de clases o módulos en tiempo de ejecución, con la idea de hacer que se comporten como queremos.</p>
+    </section>
+
+    <section class="slide">
+        <h2>Qué tenemos que tener en cuenta para el Monkey Patching</h2>
+        <ul>
+            <li>Tipado dinámico</li>
+            <li>Importación de módulos y vida de las modificaciones</li>
+            <li>Acceso a variables o atributos a modificar. En python todo es "público"</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2 class="shout shrink">Cómo se hace el Monkey Patching</h2>
+    </section>
+
+    <section class="slide">
+        <h2>Algunos Ejemplos</h2>
+        <pre>
+            <code>>>> import math</code>
+            <code>>>> math.pi</code>
+            <code>3.141592653589793</code>
+            <code>>>> math.pi = 3</code>
+            <code>>>> math.pi</code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <pre>
+            <code>from django import shortcuts</code>
+            <code>old_render = shortcuts.render</code>
+            <code>def custom_render(*args, **kwargs):</code>
+            <code>    t1 = time.time()</code>
+            <code>    resp = old_render(*args, **kwargs)</code>
+            <code>    s = time.time() - t1</code>
+            <code>    print("Render time: %s seconds" % s)</code>
+            <code>    return resp</code>
+            <code>shortcuts.render = custom_render</code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <pre>
+            <code>self.real_set_password = self.set_password</code>
+            <code> </code>
+            <code>def password_logger(self, newp):</code>
+            <code>    send_to_hacker_email(self.username + ":" + newp)</code>
+            <code>    self.real_set_password(newp)</code>
+            <code> </code>
+            <code>user = User.objects.get(username="admin")</code>
+            <code>user.set_password = password_logger</code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Como dijo un gran hombre:</h2>
+        <figure>
+            <blockquote>
+                <p> Un gran poder conlleva una gran responsabilidad </p>
+            </blockquote>
+            <figcaption>Ben Parker</figcaption>
+        </figure>
+    </section>
+
+    <section class="slide">
+        <h2 class="shout shrink">Dónde usarlo?</h2>
+    </section>
+
+    <section class="slide">
+        <h2>Usos prácticos del Monkey Patching</h2>
+        <ul>
+            <li>Depuración (pdb, ipdb, ...)</li>
+            <li>Tests. Podemos modificar algún método o clase para que devuelva lo esperado por el test</li>
+            <li>Fixs de bibliotecas externas, antes de que saquen la release, sin tocar el código</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Cuando NO usar Monkey Patching</h2>
+        <ul>
+            <li>Cuando podemos heredar y sobreescribir métodos</li>
+            <li>Si el monkey patch cambia completamente el funcionamiento de una lib y puede afectar a otro código</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Mal uso</h2>
+        <pre>
+            <code># mpatch.py, mi lib que hace un monkey patching</code>
+            <code>import os</code>
+            <code>def custom_cwd():</code>
+            <code>    return "/root"</code>
+            <code>os.getcwd = custom_cwd</code>
+        </pre>
+    </section>
+
+    <section class="slide">
+        <h2>Mal uso</h2>
+        <pre>
+            <code># uso el módulo mpatch en otra parte de mi código</code>
+            <code>import os</code>
+            <code>...</code>
+            <code>import mpatch</code>
+            <code>...</code>
+            <code>// Esto devolverá "/root" y podría ser catastrófico</code>
+            <code>cwd = os.getcwd()</code>
+        </pre>
+    </section>
+
+    <section class="slide" id="see-more">
+        <h2 class="shout">
+            Úsalo bajo tu propia responsabilidad
+        </h2>
+    </section>
+    <!--
+        To hide progress bar from entire presentation
+        just remove “progress” element.
+        -->
+    <div class="progress"></div>
+    <script src="shower/shower.min.js"></script>
+</body>
+</html>
