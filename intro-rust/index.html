@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Rust</title>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="shower/themes/material/styles/screen-16x10.css">
+    <link href="prism/prism.css" rel="stylesheet" />
+    <style>
+        .slide {
+            background-color: #397004;
+            color: #eee;
+        }
+
+        .slide h2 {
+            color: white;
+        }
+        .slide p.note, .slide pre .comment {
+            color: #ddd;
+        }
+
+        .slide code {
+            padding: 0;
+        }
+
+        .slide .shout::after {
+            position: absolute;
+            top: -300%;
+            right: 0;
+            bottom: -300%;
+            left: 0;
+            z-index: -1;
+            background: #397004 -webkit-linear-gradient(315deg,#397004 50%,#2f4e31 50%) no-repeat;
+            background: #397004 linear-gradient(135deg,#397004 50%,#2f4e31 50%) no-repeat;
+            content: '';
+        }
+
+        .rust-logo {
+            background-color: white;
+            background-image: url('pictures/rust-logo-blk.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100%;
+            border-radius: 3px;
+            margin: 0 auto;
+            width: 200px;
+            height: 200px;
+        }
+
+        .two-columns .column-1 {
+            float: left;
+            width: 48%;
+            font-size: small;
+        }
+        .two-columns .column-2 {
+            float: right;
+            width: 48%;
+            font-size: small;
+        }
+
+        .small {
+            font-size: small;
+        }
+    </style>
+</head>
+<body class="shower list">
+    <header class="caption">
+        <h1>Introducción a Rust</h1>
+        <p>wadobo.com</p>
+    </header>
+    <section class="slide" id="cover">
+        <h2>Introducción a Rust</h2>
+        <p>Daniel García Moreno (@danigm)</p>
+        <p>&lt;danigm@wadobo.com&gt;</p>
+        <p>http://wadobo.com</p>
+        <div class="rust-logo"> </div>
+        <img src="pictures/slide-bg.png" alt="" class="cover">
+        <!--
+            To apply styles to the certain slides
+            set slide ID to get needed elements
+            -->
+        <style>
+            #cover h2 {
+                margin:30px 0 0;
+                color:#FFF;
+                text-align:center;
+                font-size:70px;
+                }
+            #cover p {
+                margin:10px 0 0;
+                text-align:center;
+                color:#FFF;
+                font-style:italic;
+                font-size:20px;
+            }
+            #cover p a {
+                color:#FFF;
+            }
+        </style>
+    </section>
+
+    <section class="slide">
+        <h2 class="shout shrink">Qué es Rust</h2>
+    </section>
+
+    <section class="slide">
+        <h2>Rust</h2>
+        <figure>
+            <blockquote>
+                <p>
+                    Rust es un lenguaje de programación de sistemas
+                    extremadamente rápido, previene fallas de segmentación
+                    y garantiza la seguridad de los hilos de ejecución.
+                </p>
+            </blockquote>
+        </figure>
+    </section>
+
+    <section class="slide">
+        <pre data-line="3"><code class="language-rust">
+// hola.rs
+fn main() {
+    println!("Hola Mundo!");
+}</code></pre>
+
+        <pre class="command-line" data-user="danigm" data-host="wadobo"
+        data-output="3"><code class="language-bash">
+rustc hola.rs
+./hola
+Hola Mundo!</code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>C/C++ No son lenguajes seguros</h2>
+
+        <ul>
+            <li>Segmentation fault (acceso a un puntero incorrecto)</li>
+            <li>Memory leaks (no free)</li>
+            <li>Seguridad en hilos</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <h2>Lenguajes Seguros</h2>
+        <ul>
+            <li>Python</li>
+            <li>Java</li>
+            <li>JavaScript</li>
+        </ul>
+        <p>Recolector de basura, no son eficientes</p>
+    </section>
+
+    <section class="slide"><h2 class="shout">Por qué Rust</h2></section>
+    <section class="slide">
+        <ul>
+            <li>Software libre y desarrollo libre (github.com/rust-lang)</li>
+            <li>Rápido y eficiente (cómo C/C++ o mejor)</li>
+            <li>Manejo de memoria seguro (No memory leak)</li>
+            <li>Sin máquina virtual, interprete ni recolector de basura (runs everywhere)</li>
+            <li>Sin comportamiento no definido</li>
+            <li>Abstracción a coste cero</li>
+            <li>Sintáxis moderna</li>
+            <li>Comunidad</li>
+            <li>Sponsored by Mozilla (makers of Firefox)</li>
+        </ul>
+    </section>
+
+    <section class="slide"><h2 class="shout">rustup y Cargo</h2></section>
+    <section class="slide">
+        <h2>Instalar y tener actualizado rust es realmente sencillo con rustup</h2>
+        <pre class="command-line" data-user="danigm" data-host="wadobo"><code class="language-bash">
+curl https://sh.rustup.rs -sSf | sh
+export PATH=$PATH:$HOME/.cargo/bin</code></pre>
+        Además se pueden instalar otros targets para compilación cruzada
+        <pre class="command-line" data-user="danigm" data-host="wadobo"><code class="language-bash">
+rustup target list
+rustup target install x86_64-pc-windows-gnu</code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>Cargo</h2>
+        Cargo es una herramienta que nos permite gestionar proyectos rust,
+        dependencias, compilar, generar documentación, hacer tests, etc...
+        <pre class="command-line" data-user="danigm" data-host="wadobo"><code class="language-bash">cargo new --bin hola</code></pre>
+
+        <div class="two-columns">
+            <pre class="column-1"><code class="language-config">
+# cat Cargo.toml
+[package]
+name = "hola"
+version = "0.1.0"
+authors = ["Daniel García Moreno <danigm@wadobo.com>"]
+
+[dependencies] </code> </pre>
+            <pre class="column-2"><code class="language-rust">
+// cat src/main.rs
+fn main() {
+    println!("Hello, world!");
+} </code> </pre>
+        </div>
+    </section>
+
+    <section class="slide">
+        <pre class="command-line" data-user="danigm" data-host="wadobo" data-output="2"><code class="language-bash">
+cargo run
+Hello, world!
+cargo build --release
+cargo check
+cargo test
+cargo doc
+cargo search time
+cargo add package
+cargo install package
+cargo publish</code></pre>
+    </section>
+
+    <section class="slide"><h2 class="shout">Sintaxis</h2></section>
+    <section class="slide two-columns">
+        <pre class="column-1"><code class="language-rust">
+extern crate chrono;
+use chrono::prelude::*;
+
+fn get_time() -> DateTime<Local> {
+    let d = Local::now();
+    d
+}
+
+/// función que suma los números de 0 a n
+fn get_sum(n: i32) -> i32 {
+    let mut x: i32 = 0;
+    for i in 0..n {
+        x += i;
+    }
+
+    x
+}</code></pre>
+
+        <pre class="column-2"><code class="language-rust">
+fn dup(txt1: &str, txt2: &str) {
+    println!("{0} {1} {0} {1}", txt1, txt2);
+}
+
+// función principal
+fn main() {
+    let t = get_time();
+    println!("Hola Mundo! {}", t);
+
+    let i = get_sum(10);
+    println!("Resultado: {}", i);
+
+    dup("esto", "otro");
+}</code></pre>
+    </section>
+
+    <section class="slide"><h2 class="shout">Structs y Enums</h2></section>
+    <section class="slide"><h2 class="shout">Gestión de memoria</h2></section>
+    <section class="slide"><h2 class="shout">Pattern matching</h2></section>
+    <section class="slide"><h2 class="shout">Gestión de errores</h2></section>
+    <section class="slide"><h2 class="shout">Option</h2></section>
+    <section class="slide"><h2 class="shout">Traits</h2></section>
+    <section class="slide"><h2 class="shout">Macros</h2></section>
+    <section class="slide"><h2 class="shout">Crates y módulos</h2></section>
+    <section class="slide"><h2 class="shout">Documentación y tests</h2></section>
+
+    <section class="slide" id="see-more">
+        <h2 class="shout">
+            rust-lang.org
+        </h2>
+    </section>
+    <!--
+        To hide progress bar from entire presentation
+        just remove “progress” element.
+        -->
+    <div class="progress"></div>
+    <script src="shower/shower.min.js"></script>
+    <script src="prism/prism.js"></script>
+</body>
+</html>
