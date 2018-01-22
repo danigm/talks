@@ -48,6 +48,10 @@
             height: 200px;
         }
 
+        .two-columns ul.column-1 {
+            font-size: large;
+        }
+
         .two-columns .column-1 {
             float: left;
             width: 48%;
@@ -254,10 +258,225 @@ fn main() {
     </section>
 
     <section class="slide"><h2 class="shout">Structs y Enums</h2></section>
+    <section class="slide two-columns">
+        <pre class="column-2"><code class="language-rust">
+pub struct Persona {
+    nombre: String,
+    apellido1: String,
+    apellido2: Option<String>,
+    edad: i32,
+    prof: Profesion,
+}
+
+impl Persona {
+    pub fn new(nombre: String, apellidos: (String, String)) -> Persona {
+        Persona {
+            nombre: nombre,
+            apellido1: apellidos.0,
+            apellido2: Some(apellidos.1),
+            edad: 0,
+            prof: Profesion::Docotor(Profesion::Medicina),
+        }
+    }
+}
+</code></pre>
+
+        <pre class="column-1"><code class="language-rust">
+enum Profesion {
+    Informatica,
+    Medicina,
+    Doctor(Profesion),
+    Estudiante(Profesion),
+    Otro(String),
+}
+</code></pre>
+    </section>
+
     <section class="slide"><h2 class="shout">Gestión de memoria</h2></section>
-    <section class="slide"><h2 class="shout">Pattern matching</h2></section>
+    <section class="slide two-columns">
+        <h2>Ownership</h2>
+        <ul class="column-1">
+            <li>Las variables son propietarias de la memoria a la que apuntan</li>
+            <li>Las asignaciones por defecto "mueven" la propiedad de la memoria</li>
+            <li>Los tipos básicos y los tipos que implementan Copy son "copiados" en lugar de "movidos"</li>
+            <li>Muchos tipos implementan Clone para poder "copiar" explícitamente</li>
+        </ul>
+
+        <pre class="column-2"><code class="language-rust">
+let v = vec![1, 2, 3];
+let v2 = v;
+
+let a = v[0]; // Error, intentamos usar v después de moverlo
+</code></pre>
+    </section>
+    <section class="slide two-columns">
+        <h2>Borrowing</h2>
+        <ul class="column-1">
+            <li>En lugar de "mover" pasamos una referencia con "&amp;"</li>
+            <li>Pueden existir una o más referencias a un valor (&amp;T)</li>
+            <li>Sólo puede existir una referencia mutable (&amp;mut T)</li>
+            <li>El ámbito de la referencia no puede ser mayor que el del propietario del valor</li>
+        </ul>
+
+        <pre class="column-2"><code class="language-rust">
+let mut v = vec![1, 2, 3];
+let v2 = &v; // referencia
+let v3 = &v; // referencia
+
+let a = v[0];
+
+// Error, como hay referencias de lectura, no puede existir una referencia mutable
+let v4 = &mut v;
+</code></pre>
+<pre class="column-2"><code class="language-rust">
+let mut n = 3;
+{
+    let nref = &n;
+    *nref = 5;
+}
+
+println!("n: {}", n);
+</code></pre>
+
+    </section>
+
+    <section class="slide two-columns">
+        <h2>Lifetimes</h2>
+        <ul class="column-1">
+            <li>Las referencias tienen un tiempo de vida asociado al ámbito del valor al que apuntan</li>
+            <li>Como una referencia no puede vivir más que el valor al que
+            apunta, a veces hay que decirle al compilador cuál es el
+            "lifetime"</li>
+        </ul>
+
+        <pre class="column-2"><code class="language-rust">
+fn eliminar_prefijo<'a, 'b>(orig: &'a str,
+                            prefijo: &'b str)
+                            -> &'a str {
+    &orig[prefijo.len()..]
+}
+
+fn main() {
+    let x;
+    {
+        let a = "texto:hola".to_string();
+        let b = "texto:";
+
+        x = eliminar_prefijo(&a, &b);
+    }
+
+    println!("X: {}", x);
+}
+</code></pre>
+    </section>
+
     <section class="slide"><h2 class="shout">Gestión de errores</h2></section>
+    <section class="slide two-columns">
+        <h2>Result&lt;T, E&gt;</h2>
+        <ul class="column-1">
+            <li>Rust no tiene excepciones</li>
+            <li>Existe un tipo llamado Result que se usa para operaciones
+            que pueden fallar</li>
+            <li>Un Result puede ser Ok(T) o Err(E), es un enum</li>
+            <li>El operador "?" se utiliza para propagar errores dentro de
+            funciones que devuelven un Result</li>
+            <li>Usar el tipo Result nos "obliga" a tratar los errores</li>
+        </ul>
+
+        <pre class="column-2"><code class="language-rust">
+fn division(n: i32, d: i32) -> Result&lt;i32, &str> {
+    if d == 0 {
+        return "No se puede dividir por cero";
+    }
+    n / d
+}
+fn propagando() -> Result&lt;i32, &str> {
+    let n = division(3, 0)?;
+    println!("resultado de la división: {}", n);
+    n
+}
+fn main() {
+    let r = propagando();
+    if r.is_ok() {
+        // accediendo al valor, si no es ok, fallará
+        println!("valor: {}", r.unwrap());
+    }
+    assert_eq!(r, Err("No se puede dividir por cero"));
+}
+</code></pre>
+    </section>
+
     <section class="slide"><h2 class="shout">Option</h2></section>
+    <section class="slide two-columns">
+        <h2>Option&lt;T&gt;</h2>
+        <ul class="column-1">
+            <li>Rust no tiene tipo NULL</li>
+            <li>Existe un tipo llamado Option que se usa para definir tipos
+            que puedan estar "vacíos"</li>
+            <li>Un option puede ser Some(T) o None, es un enum</li>
+            <li>Usar el tipo Option nos "obliga" a tratar los tipos "nulos"</li>
+        </ul>
+
+        <pre class="column-2"><code class="language-rust">
+let mut n: Option&lt;i32&gt; = None;
+
+// Error porque es un option, no un i32
+let suma = n + 3;
+if n.is_some() {
+    let suma = n.unwrap() + 3;
+}
+
+n = Some(5);
+let suma = match n {
+    Some(i) => i + 3,
+    None => 0,
+};
+</code></pre>
+    </section>
+
+    <section class="slide"><h2 class="shout">Pattern matching</h2></section>
+    <section class="slide">
+        <h2>Pattern matching</h2>
+
+        <ul>
+            <li>Se utiliza como una especie de switch</li>
+            <li>Gestión de errores y tipos nulos</li>
+            <li>Muy útil combinado con enums</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <pre><code class="language-rust">
+match n {
+    i if i &lt; 0 => {
+        println!("número negativo: {}", i);
+    },
+    5 => println!("n es 5"),
+    _ => println!("cualquier cosa"),
+};
+</code></pre>
+    </section>
+    <section class="slide">
+        <pre><code class="language-rust">
+if let Some(n) = funcion_devuelve_option(23) {
+    println!("{}", n + 4);
+}
+
+if let Err(error) = funcion_result(3, 5) {
+    println!("ha ocurrido un error");
+    return;
+}
+</code></pre>
+    </section>
+    <section class="slide">
+        <pre><code class="language-rust">
+let n1 = match n {
+    i if i &gt; 0 => -i,
+    0 => 0,
+    _ => 42,
+};
+</code></pre>
+    </section>
+
     <section class="slide"><h2 class="shout">Traits</h2></section>
     <section class="slide"><h2 class="shout">Macros</h2></section>
     <section class="slide"><h2 class="shout">Crates y módulos</h2></section>
