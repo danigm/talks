@@ -8,6 +8,27 @@
     <link rel="stylesheet" href="shower/themes/material/styles/screen-16x10.css">
     <link href="prism/prism.css" rel="stylesheet" />
     <style>
+        .qrcode {
+            width: 40%;
+            margin: 0 auto;
+            display: block;
+            border-radius: 10px;
+            box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .qrcode.cover {
+            position: absolute;
+            right: -300px;
+            top: 100px;
+            width: 80px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        #see-more {
+            text-align: center;
+        }
+
         .slide {
             background-color: #397004;
             color: #eee;
@@ -80,6 +101,7 @@
         <p>http://wadobo.com</p>
         <div class="rust-logo"> </div>
         <img src="pictures/slide-bg.png" alt="" class="cover">
+        <img src="pictures/wado_qrcode.gif" alt="" class="qrcode cover">
         <!--
             To apply styles to the certain slides
             set slide ID to get needed elements
@@ -478,14 +500,215 @@ let n1 = match n {
     </section>
 
     <section class="slide"><h2 class="shout">Traits</h2></section>
+    <section class="slide">
+        <h2>Traits</h2>
+
+        <ul>
+            <li>Tipos genéricos que cumplan un contrato</li>
+            <li>Las funciones pueden ser sólo definiciones o implementaciones completas</li>
+            <li>Cualquier tipo puede implementar un Trait</li>
+            <li>En las cabeceras de funciones se pueden restringir los
+            tipos genéricos para que cumplan una serie de Traits</li>
+            <li>Los traits permiten herencia</li>
+            <li>Los tipos básicos se pueden implementar automáticamente con derive</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <pre><code class="language-rust">
+trait Operaciones : PartialEq {
+    fn area(&self) -> f64;
+    fn perimetro(&self) -> f64;
+    fn print(&self) {
+        println!("Area: {}", self.area());
+        println!("Perímetro: {}", self.perimetro());
+    }
+}
+</code></pre>
+    </section>
+
+    <section class="slide">
+        <pre><code class="language-rust">
+use std::f64::consts::PI;
+#[derive(Debug, PartialEq)]
+struct Circulo {
+    centro: (i32, i32),
+    radio: i32,
+}
+impl Operaciones for Circulo {
+    fn area(&self) -> f64 { PI * self.radio.pow(2) as f64 }
+    fn perimetro(&self) -> f64 { use std::f64::consts::PI; PI * self.radio as f64 * 2.0 }
+}
+let c = Circulo { centro: (0, 0), radio: 5 };
+c.print();
+</code></pre>
+    </section>
+
+    <section class="slide two-columns">
+        <pre class="column-1"><code class="language-rust">
+#[derive(Debug)]
+struct Rectangulo {
+    alto: i32,
+    largo: i32
+}
+
+impl PartialEq for Rectangulo {
+    fn eq(&self, other: &Rectangulo) -> bool {
+        self.alto * self.largo == other.alto * other.largo
+    }
+}
+</code></pre>
+<pre class="column-2"><code class="language-rust">
+impl Operaciones for Rectangulo {
+    fn area(&self) -> f64 {
+        (self.alto * self.largo) as f64
+    }
+    fn perimetro(&self) -> f64 {
+        (self.alto * 2 + self.largo * 2) as f64
+    }
+    fn print(&self) {
+        println!(" * Area     : {} m2", self.area());
+        println!(" * Perímetro: {} m", self.perimetro());
+    }
+}
+
+let r = Rectangulo {
+    alto: 10,
+    largo: 5,
+};
+r.print();
+</code></pre>
+    </section>
+
     <section class="slide"><h2 class="shout">Macros</h2></section>
+    <section class="slide">
+        <ul>
+            <li>Son las fuciones que terminan en !, como println!, assert!, vec!, etc</li>
+            <li>Nos permiten definir "funciones" con parámetros variables</li>
+            <li>No tienen colisión de nombres como en C</li>
+            <li>Las expresiones se evaluan como se espera, no es simple
+            sustitución</li>
+            <li>Se pueden definir macros recursivas</li>
+            <li>Se puede usar pattern matching para sobrecargar el número o
+            tipo de argumentos</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <pre><code class="language-rust">
+macro_rules! cat {
+    ( $( $x:expr ),* ) => {{
+        let mut base = String::new();
+        $(
+            base = base + &format!("-{}", $x);
+        )*
+        base[..]
+    }}
+}
+
+println!("CAT: {}", cat!("hola", "adios", "123"));
+</code></pre>
+    </section>
+
+    <section class="slide">
+        <pre><code class="language-rust">
+macro_rules! foo {
+    (x => $e:expr) => (println!("mode X: {}", $e));
+    (y => $e:expr) => (println!("mode Y: {}", $e));
+}
+
+foo!(y => 3);
+</code></pre>
+    </section>
+
     <section class="slide"><h2 class="shout">Crates y módulos</h2></section>
+    <section class="slide">
+        <ul>
+            <li>Cada fichero .rs es un módulo</li>
+            <li>Se puede definir un módulo con "mod" o dentro de una
+            carpeta con mod.rs</li>
+            <li>La visibilidad entre módulos se controla con "pub"</li>
+            <li>Para usar un módulo en otro se utiliza "use modname::XX::XX</li>
+            <li>Un crate es una librería, una dependencia externa</li>
+            <li>Las libs rust se suelen publicar en crates.io</li>
+            <li>Para usar un crate en tu proyecto se usa "extern crate cratename"</li>
+        </ul>
+    </section>
+
+
     <section class="slide"><h2 class="shout">Documentación y tests</h2></section>
+    <section class="slide">
+        <h2>Doc</h2>
+        <ul>
+            <li>Documentación con comentarios en código "///"</li>
+            <li>Sintáxis markdown en los comentarios para la documentación</li>
+            <li>Generación automática en html con cargo doc</li>
+            <li>Hay secciones especiales en la doc: Panics, Errors, Safety,
+            Examples</li>
+        </ul>
+    </section>
+    <section class="slide">
+        <pre><code class="language-none">
+/// Constructs a new `Rc&lt;T>`.
+///
+/// # Examples
+///
+/// ```
+/// use std::rc::Rc;
+///
+/// let five = Rc::new(5);
+/// ```
+pub fn new(value: T) -> Rc&lt;T> {
+    // Implementation goes here.
+}
+</code></pre>
+    </section>
+
+    <section class="slide">
+        <h2>Tests</h2>
+        <ul>
+            <li>Módulo tests</li>
+            <li>Directorio tests/*.rs</li>
+            <li>Tests en documentación</li>
+            <li>Ejecución con cargo test</li>
+        </ul>
+    </section>
+
+    <section class="slide">
+        <pre><code class="language-rust">
+pub fn add_two(a: i32) -> i32 { a + 2 }
+
+#[cfg(test)]
+mod tests {
+    use super::add_two;
+
+    #[test]
+    fn it_works() {
+        assert_eq!(4, add_two(2));
+    }
+}
+</code></pre>
+    </section>
+
+    <section class="slide">
+        <pre><code class="language-none">
+/// This function adds two to its argument.
+///
+/// # Examples
+///
+/// ```
+/// use adder::add_two;
+///
+/// assert_eq!(4, add_two(2));
+/// ```
+pub fn add_two(a: i32) -> i32 { a + 2 }
+</code></pre>
+    </section>
 
     <section class="slide" id="see-more">
-        <h2 class="shout">
-            rust-lang.org
-        </h2>
+        <img src="pictures/wado_qrcode.gif" alt="" class="qrcode">
+        https://wadobo.com<br/>
+        danigm@wadobo.com<br/>
+        http://rust-lang.org<br/>
     </section>
     <!--
         To hide progress bar from entire presentation
