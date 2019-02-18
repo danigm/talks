@@ -92,16 +92,13 @@
 <body class="shower list">
     <header class="caption">
         <h1>Introducción a Rust</h1>
-        <p>wadobo.com</p>
     </header>
     <section class="slide" id="cover">
         <h2>Introducción a Rust</h2>
         <p>Daniel García Moreno (@danigm)</p>
-        <p>&lt;danigm@wadobo.com&gt;</p>
-        <p>http://wadobo.com</p>
+        <p>&lt;danigm@gnome.org&gt;</p>
+        <p>https://danigm.net</p>
         <div class="rust-logo"> </div>
-        <img src="pictures/slide-bg.png" alt="" class="cover">
-        <img src="pictures/wado_qrcode.gif" alt="" class="qrcode cover">
         <!--
             To apply styles to the certain slides
             set slide ID to get needed elements
@@ -150,7 +147,7 @@ fn main() {
     println!("Hola Mundo!");
 }</code></pre>
 
-        <pre class="command-line" data-user="danigm" data-host="wadobo"
+        <pre class="command-line" data-user="danigm" data-host="rincewind"
         data-output="3"><code class="language-bash">
 rustc hola.rs
 ./hola
@@ -195,11 +192,11 @@ Hola Mundo!</code></pre>
     <section class="slide"><h2 class="shout">rustup y Cargo</h2></section>
     <section class="slide">
         <h2>Instalar y tener actualizado rust es realmente sencillo con rustup</h2>
-        <pre class="command-line" data-user="danigm" data-host="wadobo"><code class="language-bash">
+        <pre class="command-line" data-user="danigm" data-host="rincewind"><code class="language-bash">
 curl https://sh.rustup.rs -sSf | sh
 export PATH=$PATH:$HOME/.cargo/bin</code></pre>
         Además se pueden instalar otros targets para compilación cruzada
-        <pre class="command-line" data-user="danigm" data-host="wadobo"><code class="language-bash">
+        <pre class="command-line" data-user="danigm" data-host="rincewind"><code class="language-bash">
 rustup target list
 rustup target install x86_64-pc-windows-gnu</code></pre>
     </section>
@@ -208,7 +205,7 @@ rustup target install x86_64-pc-windows-gnu</code></pre>
         <h2>Cargo</h2>
         Cargo es una herramienta que nos permite gestionar proyectos rust,
         dependencias, compilar, generar documentación, hacer tests, etc...
-        <pre class="command-line" data-user="danigm" data-host="wadobo"><code class="language-bash">cargo new --bin hola</code></pre>
+        <pre class="command-line" data-user="danigm" data-host="rincewind"><code class="language-bash">cargo new --bin hola</code></pre>
 
         <div class="two-columns">
             <pre class="column-1"><code class="language-config">
@@ -216,7 +213,7 @@ rustup target install x86_64-pc-windows-gnu</code></pre>
 [package]
 name = "hola"
 version = "0.1.0"
-authors = ["Daniel García Moreno <danigm@wadobo.com>"]
+authors = ["Daniel García Moreno <danigm@gnome.org>"]
 
 [dependencies] </code> </pre>
             <pre class="column-2"><code class="language-rust">
@@ -228,7 +225,7 @@ fn main() {
     </section>
 
     <section class="slide">
-        <pre class="command-line" data-user="danigm" data-host="wadobo" data-output="2"><code class="language-bash">
+        <pre class="command-line" data-user="danigm" data-host="rincewind" data-output="2"><code class="language-bash">
 cargo run
 Hello, world!
 cargo build --release
@@ -504,7 +501,7 @@ let n1 = match n {
         <h2>Traits</h2>
 
         <ul>
-            <li>Tipos genéricos que cumplan un contrato</li>
+            <li>Tipos genéricos que tengan unas características</li>
             <li>Las funciones pueden ser sólo definiciones o implementaciones completas</li>
             <li>Cualquier tipo puede implementar un Trait</li>
             <li>En las cabeceras de funciones se pueden restringir los
@@ -705,9 +702,8 @@ pub fn add_two(a: i32) -> i32 { a + 2 }
     </section>
 
     <section class="slide" id="see-more">
-        <img src="pictures/wado_qrcode.gif" alt="" class="qrcode">
-        https://wadobo.com<br/>
-        danigm@wadobo.com<br/>
+        https://danigm.net<br/>
+        danigm@gnome.org<br/>
         http://rust-lang.org<br/>
     </section>
     <!--
