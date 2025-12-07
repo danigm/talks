@@ -1,15 +1,15 @@
-fn main() {
-    let mut n: i32 = 4; // typed, stack
-    let mut vector = vec![1, 2, 3]; // auto-detect type, heap
+use std::net::{TcpListener, TcpStream};
 
-    n = 5;
-    vector[0] = n;
+fn handle_client(stream: TcpStream) {
+    println!("Client connected");
+}
 
-    println!("Hello, world!");
-    println!("n is {} - vector is {:?}", n, vector);
+fn main() -> std::io::Result<()> {
+    let listener = TcpListener::bind("127.0.0.1:8080")?;
 
-    let newv: &Vec<i32> = &vector;
-    println!("This is the new vector variable {:?}", newv);
-    println!("This is the old vector variable {:?}", vector);
-
+    // accept connections and process them serially
+    for stream in listener.incoming() {
+        handle_client(stream?);
+    }
+    Ok(())
 }

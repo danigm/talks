@@ -41,7 +41,7 @@ Look for more helpful command with:
 cargo --list
 ```
 
-## Ownership, Borrowing and Lifetimes
+## Ownership, Borrowing
 
  * Variable definiton with `let`:
 
@@ -88,3 +88,36 @@ println!("This is the old vector variable {:?}", vector);
 There can be as much references (`&`) to a value as you want, but you can just
 have one mutable reference `&mut`, and you can't merge normal references and
 mutable references. These restrictions prevent data races.
+
+## Let's start to write our server
+
+To have a basic HTTP server we need to open a socket and listen for
+connections, so let's take a look to the rust reference:
+https://doc.rust-lang.org/stable/std/net/index.html
+
+Rust comes with a good standard library, so we looks like there's a **Struct**
+for our specific user case: **TcpListener**
+https://doc.rust-lang.org/stable/std/net/struct.TcpListener.html
+
+```
+use std::net::{TcpListener, TcpStream};
+
+fn handle_client(stream: TcpStream) {
+    println!("Client connected");
+}
+
+fn main() -> std::io::Result<()> {
+    let listener = TcpListener::bind("127.0.0.1:8080")?;
+
+    // accept connections and process them serially
+    for stream in listener.incoming() {
+        handle_client(stream?);
+    }
+    Ok(())
+}
+```
+
+ * **use** statement at the top, to *import* definitions from other *modules*
+ * **fn** statement for function definition, we've seen the main definition before
+ * **for** statement, loop for each item in a collection
+ * **?** operand, propagate errors with Result type, if is\_err, return Err
