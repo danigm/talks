@@ -121,3 +121,10 @@ fn main() -> std::io::Result<()> {
  * **fn** statement for function definition, we've seen the main definition before
  * **for** statement, loop for each item in a collection
  * **?** operand, propagate errors with Result type, if is\_err, return Err
+
+## TODO
+ * Result and Option types
+ * Pattern matching
+ * Traits
+ * Tests
+ * Useful type wrappers (Box, Rc, Arc, Mutex)
