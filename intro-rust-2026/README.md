@@ -54,7 +54,7 @@ let vector = vec![1, 2, 3]; // auto-detect type, heap
 
 ```
 n = 5;
-vector[0] = 4;
+vector[0] = n;
 ```
 
  * Variables are inmutable by default, use the `mut` prefix to make a variable
@@ -62,6 +62,29 @@ vector[0] = 4;
 
 ### Ownership rules
 
- * Each value in Rust has an owner.
- * There can only be one owner at a time.
- * When the owner goes out of scope, the value will be dropped.
+ 1. Each value in Rust has an owner.
+ 2. There can only be one owner at a time.
+ 3. When the owner goes out of scope, the value will be dropped.
+
+ * Let's try something new, let's *move* the vector to a new variable:
+
+```
+let newv = vector;
+println!("This is the new vector variable {:?}", newv);
+println!("This is the old vector variable {:?}", vector);
+```
+
+### Borrowing (references)
+
+Data can't have more than one owner, but we can always borrow with `&` and
+`&mut`:
+
+```
+let newv: &Vec<i32> = &vector;
+println!("This is the new vector variable {:?}", newv);
+println!("This is the old vector variable {:?}", vector);
+```
+
+There can be as much references (`&`) to a value as you want, but you can just
+have one mutable reference `&mut`, and you can't merge normal references and
+mutable references. These restrictions prevent data races.
