@@ -3,7 +3,8 @@ mod server;
 use self::server::HttpServer;
 
 fn main() {
-    let server = HttpServer::new();
-    println!("Running server {server}");
-    server.run();
+    if let Some(server) = HttpServer::new(Some(8080)) {
+        println!("Running server {server}");
+        server.run();
+    }
 }

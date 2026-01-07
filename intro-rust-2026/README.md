@@ -201,8 +201,40 @@ Or we can use the `#[derive(Display)]` attribute to do it automatically, if the 
 simple enought.
 https://doc.rust-lang.org/stable/book/appendix-03-derivable-traits.html
 
+## Let's handle errors correctly (intro to Result & Option types)
+
+Rust implements errors handling using the type system. There's no exceptions,
+just some default types to wrap results and optional values.
+
+The **Option** type is used to return something that can be NULL:
+https://doc.rust-lang.org/stable/std/option/enum.Option.html
+
+For example we can pass an optional argument to change the server listening
+port:
+
+```
+    pub fn new(port: Option<i32>) -> HttpServer {
+        let default_port = port.unwrap_or(8080);
+```
+
+The **Result** type is used to return something that can fail:
+https://doc.rust-lang.org/stable/std/result/enum.Result.html
+
+We can modify our methods to remove all the plain **unwrap** code and handle
+errors correctly or just *raise* to the caller.
+
+```
+    pub fn run(&self) -> Result<(), std::io::Error> {
+    ...
+    }
+    fn handle_client(&self, stream: &mut TcpStream) -> Result<(), std::io::Error> {
+    ...
+    }
+```
+
+It's typical to use pattern-matching (`match` or `if let`) to handle this kind
+of errors with **Option** and **Result**
+
 ## TODO
- * Result and Option types
- * Pattern matching
  * Tests
  * Useful type wrappers (Box, Rc, Arc, Mutex)
