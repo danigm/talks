@@ -235,6 +235,10 @@ errors correctly or just *raise* to the caller.
 It's typical to use pattern-matching (`match` or `if let`) to handle this kind
 of errors with **Option** and **Result**
 
+## Creating our own errors (something about enums)
+
 ## TODO
- * Tests
+ * Closures
+ * Threads
  * Useful type wrappers (Box, Rc, Arc, Mutex)
+ * Tests

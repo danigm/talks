@@ -1,6 +1,24 @@
 use std::io::prelude::*;
+use std::string::FromUtf8Error;
 use std::fmt::Display;
 use std::net::{TcpListener, TcpStream};
+
+pub enum Error {
+    IOError(std::io::Error),
+    U8Error(FromUtf8Error),
+}
+
+impl From<FromUtf8Error> for Error {
+    fn from(value: FromUtf8Error) -> Self {
+        Error::U8Error(value)
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(value: std::io::Error) -> Self {
+        Error::IOError(value)
+    }
+}
 
 pub struct HttpServer {
     port: i32,
@@ -20,7 +38,7 @@ impl HttpServer {
         }
     }
 
-    pub fn run(&self) -> Result<(), std::io::Error> {
+    pub fn run(&self) -> Result<(), Error> {
         // accept connections and process them serially
         for stream in self.listener.incoming() {
             self.handle_client(&mut stream?);
@@ -29,15 +47,15 @@ impl HttpServer {
         Ok(())
     }
 
-    fn handle_client(&self, stream: &mut TcpStream) -> Result<(), std::io::Error> {
+    fn handle_client(&self, stream: &mut TcpStream) -> Result<(), Error> {
         println!("Client connected");
         let mut buf = [0u8; 256];
         let mut r = stream.read(&mut buf)?;
         while r >= 256 {
-            print!("{}", String::from_utf8(buf[0..r].to_vec()).unwrap());
+            print!("{}", String::from_utf8(buf[0..r].to_vec())?);
             r = stream.read(&mut buf)?;
         }
-        println!("{}", String::from_utf8(buf[0..r].to_vec()).unwrap());
+        println!("{}", String::from_utf8(buf[0..r].to_vec())?);
 
         stream.write(String::from("HTTP/1.1 200 OK\r\n\r\nHello world!\r\n").as_bytes());
         stream.write(String::from("\r\n").as_bytes());
