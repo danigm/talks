@@ -122,9 +122,66 @@ fn main() -> std::io::Result<()> {
  * **for** statement, loop for each item in a collection
  * **?** operand, propagate errors with Result type, if is\_err, return Err
 
+## Read and write to the stream (something about traits)
+
+**Traits** is the way to define shared behavior in Rust. Similar to Interfaces
+in OOP, but with some key differences:
+
+ * Traits can be implemented in any type, including primitives
+ * You can define default implementation in traits
+
+```
+trait MyTrait {
+    fn hello(&self) {
+        println!("Hello world");
+    }
+}
+
+impl MyTrait for i32 {}
+impl MyTrait for &str {
+    fn hello(&self) {
+        println!("Custom hello");
+    }
+}
+
+fn main() {
+    let n = 4;
+    n.hello();
+
+    let n = "world!";
+    n.hello();
+}
+```
+
+More about traits:
+ * Inheritance.
+ * You can implement a trait in the type definition (struct) or in the trait
+   definition.
+
+The **TcpStream** type implements the **Read** and **Write** traits, so we can
+read and write from/to the stream using the methods implemented in that trait:
+
+* https://doc.rust-lang.org/std/io/trait.Read.html
+* https://doc.rust-lang.org/std/io/trait.Write.html
+
+```
+fn handle_client(stream: &mut TcpStream) {
+    println!("Client connected");
+    let mut buf = [0u8; 256];
+    let mut r = stream.read(&mut buf).unwrap();
+    while r >= 256 {
+        print!("{}", String::from_utf8(buf[0..r].to_vec()).unwrap());
+        r = stream.read(&mut buf).unwrap();
+    }
+    println!("{}", String::from_utf8(buf[0..r].to_vec()).unwrap());
+
+    stream.write(String::from("HTTP/1.1 200 OK\r\n\r\nHello world!\r\n").as_bytes());
+    stream.write(String::from("\r\n").as_bytes());
+}
+```
+
 ## TODO
  * Result and Option types
  * Pattern matching
- * Traits
  * Tests
  * Useful type wrappers (Box, Rc, Arc, Mutex)
