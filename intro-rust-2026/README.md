@@ -122,7 +122,7 @@ fn main() -> std::io::Result<()> {
  * **for** statement, loop for each item in a collection
  * **?** operand, propagate errors with Result type, if is\_err, return Err
 
-## Read and write to the stream (something about traits)
+## Read and write to the stream (intro to traits)
 
 **Traits** is the way to define shared behavior in Rust. Similar to Interfaces
 in OOP, but with some key differences:
@@ -179,6 +179,27 @@ fn handle_client(stream: &mut TcpStream) {
     stream.write(String::from("\r\n").as_bytes());
 }
 ```
+
+## Implementing our own type in rust (struct)
+
+Let's reorganize our code to create a custom type and have something similar to
+Object Oriented Programming. We can have a new file called `server.rs` and
+there we can declare our **struct**, and implement the *methods* using the
+**impl**.
+
+```
+struct HttpServer { ... }
+
+impl HttpServer { ... }
+
+impl Display for HttpServer { ... }
+```
+
+We can make it printable implementing the **std::fmt::Display** trait.
+
+Or we can use the `#[derive(Display)]` attribute to do it automatically, if the type is
+simple enought.
+https://doc.rust-lang.org/stable/book/appendix-03-derivable-traits.html
 
 ## TODO
  * Result and Option types
