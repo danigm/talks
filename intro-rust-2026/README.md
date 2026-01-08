@@ -1,3 +1,10 @@
+---
+paginate: true
+auto-scaling: true
+backgroundColor: #fff
+backgroundImage: url('https://marp.app/assets/hero-background.svg')
+---
+
 # Rust programming language
 
 ## About me
@@ -9,7 +16,7 @@
 * https://danigm.net
 
 ---
-## About Rust
+# About Rust
 
 A language empowering everyone
 to build reliable and efficient software.
@@ -17,11 +24,11 @@ to build reliable and efficient software.
  * https://rust-lang.org/
 
 ---
-## Creating a rust project with cargo
+# Creating a rust project with cargo
 
- * cargo: Rust's package manager
+cargo: Rust's package manager
 
-```
+```bash
 $ cargo new http-server
 $ cd http-server
 $ cargo run
@@ -31,7 +38,7 @@ $ cargo run
  * Main source file in src/main.rs
 
 ---
-### Extra
+## Extra
 
  * add: Add external dependencies (https://crates.io)
  * test: Run test suite
@@ -40,74 +47,68 @@ $ cargo run
 
 Look for more helpful command with:
 
-```
+```bash
 cargo --list
 ```
 
 ---
-## Ownership, Borrowing
+# Ownership, Borrowing
 
- * Variable definiton with `let`:
+Variable definiton with `let`:
 
-```
+```rust
 let n: i32 = 4; // typed, stack
 let vector = vec![1, 2, 3]; // auto-detect type, heap
 ```
 
- * Let's try to modify these variables
+Let's try to modify these variables
 
-```
+```rust
 n = 5;
 vector[0] = n;
 ```
 
- * Variables are inmutable by default, use the `mut` prefix to make a variable
-   mutable.
+ * Variables are inmutable by default, use the `mut` prefix to make a variable mutable.
 
 ---
-### Ownership rules
+# Ownership rules
 
  1. Each value in Rust has an owner.
  2. There can only be one owner at a time.
  3. When the owner goes out of scope, the value will be dropped.
 
- * Let's try something new, let's *move* the vector to a new variable:
+Let's try something new, let's *move* the vector to a new variable:
 
-```
+```rust
 let newv = vector;
 println!("This is the new vector variable {:?}", newv);
 println!("This is the old vector variable {:?}", vector);
 ```
 
 ---
-### Borrowing (references)
+# Borrowing (references)
 
-Data can't have more than one owner, but we can always borrow with `&` and
-`&mut`:
+Data can't have more than one owner, but we can always borrow with `&` and `&mut`:
 
-```
+```rust
 let newv: &Vec<i32> = &vector;
 println!("This is the new vector variable {:?}", newv);
 println!("This is the old vector variable {:?}", vector);
 ```
 
-There can be as much references (`&`) to a value as you want, but you can just
-have one mutable reference `&mut`, and you can't merge normal references and
-mutable references. These restrictions prevent data races.
+There can be as much references (`&`) to a value as you want, but you can just have one mutable reference `&mut`, and you can't merge normal references and mutable references. These restrictions prevent data races.
 
 ---
-## Let's start to write our server
+# Let's start to write our server
 
-To have a basic HTTP server we need to open a socket and listen for
-connections, so let's take a look to the rust reference:
+To have a basic HTTP server we need to open a socket and listen for connections, so let's take a look to the rust reference:
 https://doc.rust-lang.org/stable/std/net/index.html
 
-Rust comes with a good standard library, so we looks like there's a **Struct**
-for our specific user case: **TcpListener**
+Rust comes with a good standard library, it looks like there's a **Struct** for our specific user case: **TcpListener**
 https://doc.rust-lang.org/stable/std/net/struct.TcpListener.html
 
 ---
-```
+```rust
 use std::net::{TcpListener, TcpStream};
 
 fn handle_client(stream: TcpStream) {
@@ -124,6 +125,10 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 ```
+<!-- Scoped style -->
+<style scoped>
+ul li { font-size: smaller; }
+</style>
 
  * **use** statement at the top, to *import* definitions from other *modules*
  * **fn** statement for function definition, we've seen the main definition before
@@ -131,16 +136,15 @@ fn main() -> std::io::Result<()> {
  * **?** operand, propagate errors with Result type, if is\_err, return Err
 
 ---
-## Read and write to the stream (intro to traits)
+# Read and write to the stream (intro to traits)
 
-**Traits** is the way to define shared behavior in Rust. Similar to Interfaces
-in OOP, but with some key differences:
+**Traits** is the way to define shared behavior in Rust. Similar to Interfaces in OOP, but with some key differences:
 
  * Traits can be implemented in any type, including primitives
  * You can define default implementation in traits
 
 ---
-```
+```rust
 trait MyTrait {
     fn hello(&self) {
         println!("Hello world");
@@ -165,18 +169,17 @@ fn main() {
 
 ---
 More about traits:
- * Inheritance.
+ * *Inheritance* and generic types!
  * You can implement a trait in the type definition (struct) or in the trait
    definition.
 
-The **TcpStream** type implements the **Read** and **Write** traits, so we can
-read and write from/to the stream using the methods implemented in that trait:
+The **TcpStream** type implements the **Read** and **Write** traits, so we can read and write from/to the stream using the methods implemented in that trait:
 
-* https://doc.rust-lang.org/std/io/trait.Read.html
-* https://doc.rust-lang.org/std/io/trait.Write.html
+- https://doc.rust-lang.org/std/io/trait.Read.html
+- https://doc.rust-lang.org/std/io/trait.Write.html
 
 ---
-```
+```rust
 fn handle_client(stream: &mut TcpStream) {
     println!("Client connected");
     let mut buf = [0u8; 256];
@@ -193,15 +196,12 @@ fn handle_client(stream: &mut TcpStream) {
 ```
 
 ---
-## Implementing our own type in rust (struct)
+# Implementing our own type in rust (struct)
 
-Let's reorganize our code to create a custom type and have something similar to
-Object Oriented Programming. We can have a new file called `server.rs` and
-there we can declare our **struct**, and implement the *methods* using the
-**impl**.
+Let's reorganize our code to create a custom type and have something similar to Object Oriented Programming. We can have a new file called `server.rs` and there we can declare our **struct**, and implement the *methods* using the **impl**.
 
 ---
-```
+```rust
 struct HttpServer { ... }
 
 impl HttpServer { ... }
@@ -211,36 +211,32 @@ impl Display for HttpServer { ... }
 
 We can make it printable implementing the **std::fmt::Display** trait.
 
-Or we can use the `#[derive(Display)]` attribute to do it automatically, if the
-type is simple enought.
-https://doc.rust-lang.org/stable/book/appendix-03-derivable-traits.html
+Or we can use the `#[derive(Display)]` attribute to do it automatically, if the type is simple enought.
+- https://doc.rust-lang.org/stable/book/appendix-03-derivable-traits.html
 
 ---
-## Let's handle errors correctly (intro to Result & Option types)
+# Let's handle errors correctly (intro to Result & Option types)
 
-Rust implements errors handling using the type system. There's no exceptions,
-just some default types to wrap results and optional values.
+Rust implements errors handling using the type system. There's no exceptions, just some default types to wrap results and optional values.
 
 ---
 The **Option** type is used to return something that can be NULL:
-https://doc.rust-lang.org/stable/std/option/enum.Option.html
+- https://doc.rust-lang.org/stable/std/option/enum.Option.html
 
-For example we can pass an optional argument to change the server listening
-port:
+For example we can pass an optional argument to change the server listening port:
 
-```
+```rust
     pub fn new(port: Option<i32>) -> HttpServer {
         let default_port = port.unwrap_or(8080);
 ```
 
 ---
 The **Result** type is used to return something that can fail:
-https://doc.rust-lang.org/stable/std/result/enum.Result.html
+- https://doc.rust-lang.org/stable/std/result/enum.Result.html
 
-We can modify our methods to remove all the plain **unwrap** code and handle
-errors correctly or just *raise* to the caller.
+We can modify our methods to remove all the plain **unwrap** code and handle errors correctly or just *raise* to the caller.
 
-```
+```rust
     pub fn run(&self) -> Result<(), std::io::Error> {
     ...
     }
@@ -250,13 +246,12 @@ errors correctly or just *raise* to the caller.
 ```
 
 ---
-It's typical to use pattern-matching (`match` or `if let`) to handle this kind
-of errors with **Option** and **Result**
+It's typical to use pattern-matching (`match` or `if let`) to handle this kind of errors with **Option** and **Result**
 
 ---
-## Creating our own errors (something about enums)
+# Creating our own errors (something about enums)
 
-```
+```rust
 pub enum Error {
     IOError(std::io::Error),
     U8Error(FromUtf8Error),
@@ -276,7 +271,7 @@ impl From<std::io::Error> for Error {
 ```
 
 ---
-## TODO
+# TODO
  * Closures
  * Threads
  * Useful type wrappers (Box, Rc, Arc, Mutex)
