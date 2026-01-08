@@ -11,10 +11,18 @@ impl MyTrait for &str {
     }
 }
 
+fn generic<T>(n: T) -> i32
+where T: MyTrait + Into<i32> {
+    n.hello();
+    100i32 + n.into()
+}
+
 fn main() {
     let n = 4;
     n.hello();
 
     let n = "world!";
     n.hello();
+
+    println!("{}", generic(3));
 }
