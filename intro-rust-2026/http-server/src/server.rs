@@ -47,18 +47,59 @@ impl HttpServer {
         Ok(())
     }
 
+    fn look_for_path(&self, content: &String) -> Option<String> {
+        // looking for GET to get the requested path
+        // This assumes that the GET and path is in the buffer completely and not splitted
+        match content.find("GET") {
+            Some(idx) => {
+                let space = content[idx+4..].find(" ").unwrap();
+                Some(String::from(&content[idx+5..idx+4+space]))
+            },
+            None => None
+        }
+    }
+
     fn handle_client(&self, stream: &mut TcpStream) -> Result<(), Error> {
         println!("Client connected");
         let mut buf = [0u8; 256];
         let mut r = stream.read(&mut buf)?;
+        let mut path = None;
         while r >= 256 {
-            print!("{}", String::from_utf8(buf[0..r].to_vec())?);
+            let content = String::from_utf8(buf[0..r].to_vec())?;
+
+            if let Some(p) = self.look_for_path(&content) {
+                path = Some(p);
+            }
+            print!("{}", content);
             r = stream.read(&mut buf)?;
         }
-        println!("{}", String::from_utf8(buf[0..r].to_vec())?);
 
-        stream.write(String::from("HTTP/1.1 200 OK\r\n\r\nHello world!\r\n").as_bytes());
-        stream.write(String::from("\r\n").as_bytes());
+        let content = String::from_utf8(buf[0..r].to_vec())?;
+        if let Some(p) = self.look_for_path(&content) {
+            path = Some(p);
+        }
+
+        println!("{}", content);
+
+        let p = match path {
+            Some(s) if s == "" => String::from("index.html"),
+            Some(s) => s,
+            None => String::from("index.html"),
+        };
+
+        // TODO: check for existence for ret and open the file to send with smaller chunks to the
+        // stream to avoid loading the whole file in memory.
+        let (ret, content) = match std::fs::read_to_string(&p) {
+            Ok(s) => (format!("200 OK"), s),
+            Err(_) => (format!("404 Not Found"), format!("404 {p} not found"))
+        };
+
+        let mut response = format!("HTTP/1.1 {ret}");
+        response += "\r\n\r\n";
+        response += &format!("{content}");
+        response += "\r\n\r\n";
+
+        stream.write(response.as_bytes());
 
         Ok(())
     }
