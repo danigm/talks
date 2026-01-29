@@ -1,0 +1,15 @@
+[package]
+name = "http-server"
+version = "0.1.0"
+edition = "2024"
+default-run = "main"
+
+[[bin]]
+name = "trait"
+path = "src/trait.rs"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+
+[dependencies]
